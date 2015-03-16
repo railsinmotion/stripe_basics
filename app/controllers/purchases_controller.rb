@@ -25,6 +25,28 @@ class PurchasesController < ApplicationController
   # POST /purchases
   # POST /purchases.json
   def create
+    @book = Book.find(params[:book_id])
+    @purchase = @book.purchases.build
+
+    begin
+      charge = Stripe::Charge.create(
+        amount: @book.price_cents,
+        currency: @book.price_currency,
+        source: params[:stripeToken],
+        description: @book.title
+      )
+      @purchase.email = params[:stripeEmail]
+      @purchase.token = params[:stripeToken]
+      @purchase.cost = @book.price
+      @purchase.description = charge.description
+      @purchase.stripe_id = charge.id
+      @purchase.save
+
+      redirect_to @book, notice: "Payment successful, enjoy reading!"
+    rescue Stripe::CardError => e
+      @purchase.errors[:base] << e.message
+      render 'new'
+    end
   end
 
   # PATCH/PUT /purchases/1
