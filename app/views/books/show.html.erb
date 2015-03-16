@@ -15,5 +15,6 @@
   <%= @book.price %>
 </p>
 
+<%= link_to 'Purchase', new_book_purchase_path(@book) %> |
 <%= link_to 'Edit', edit_book_path(@book) %> |
 <%= link_to 'Back', books_path %>
