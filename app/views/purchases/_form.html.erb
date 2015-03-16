@@ -1,0 +1,23 @@
+<%= form_for([@book, @purchase]) do |f| %>
+  <% if @purchase.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@purchase.errors.count, "error") %> prohibited this purchase from being saved:</h2>
+
+      <ul>
+      <% @purchase.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <script src="https://checkout.stripe.com/checkout.js"
+          class="stripe-button"
+          data-key="<%= ENV["STRIPE_PUBLIC_KEY"] %>"
+          data-name="Dev Books"
+          data-description="<%= @book.title %>"
+          data-currency="<%= @book.price_currency %>"
+          data-label="Buy Now!"
+          data-amount="<%= @book.price_cents %>">
+  </script>
+<% end %>
